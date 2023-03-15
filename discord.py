@@ -171,7 +171,7 @@ class DiscordUtil():
                 return True
 
     @try_except_code
-    def chat(self, account_info, from_channel_list, to_channel, from_email, to_email, guild_id='', reply_rate=0.4, interval_time=60, auto=True, mods=[], keywords=[]):
+    def chat(self, account_info, from_channel_list, to_channel, from_email, to_email, guild_id='', reply_rate=0.4, interval_time=60, is_channel_message=True, mods=[], keywords=[]):
         """发送聊天
 
         Attributes:
@@ -181,7 +181,7 @@ class DiscordUtil():
             guild_id: 服务器id.可选,默认''.回复消息才用到的参数
             reply_rate: 1表示回复消息,0表示发送消息,0.1-0.9表示回复消息的概率。默认0.4,4成概率回复消息
             interval_time: 休眠时间,有些频道会设置慢速模式,隔多久才能说话一次.默认一分钟
-            auto: 控制消息来源。auto=True时使用从频道中获取到的消息,auto=False时使用自己准备好的吹水话术
+            is_channel_message: 控制消息来源。is_channel_message=True时使用从频道中获取到的消息,is_channel_message=False时使用自己准备好的吹水话术
             mods: 管理员列表
             keywords: 关键字列表
         """
@@ -195,7 +195,7 @@ class DiscordUtil():
         reply_account_id=''
         while True:
             # 获取消息
-            if auto:
+            if is_channel_message:
                 message = random.choice(channel_messages)
             else:
                 message = random.choice(fix_messages)
@@ -217,7 +217,7 @@ class DiscordUtil():
 
 if __name__ == '__main__':
 
-    data = my_format_data(start_num=3, end_num=3)
+    data = my_format_data(start_num=1, end_num=20)
 
 
     # # 获取token,自动填充到discord.csv文件
@@ -227,34 +227,13 @@ if __name__ == '__main__':
 
 
 
-    # # 加入服务器
+    # # 发送消息
     # for d in data:
-    #     print(d)
-    #     ready_discord = ReadyDiscordUtil(d['id'])
-    #     # ready_discord.login(d['discord_create_email'], d['discord_password'])
-    #     ready_discord.join_guild('https://discord.com/invite/tapiocadao',False)
+    #     print('第',d['discord_id'],'个账户')
+    #     discord = DiscordUtil()
+    #     # token, proxy, message, to_channel, guild_id='', reply_message_id='', reply_account_id='', reply_rate=0.4
+    #     discord.send_message(d['discord_token'], d['proxy'],'ExpeditionLiveInOneDay', '1082506347574206494')
     # exit()
-
-
-
-    # # 用来获取频道历史消息
-    # discord = DiscordUtil()
-    # # token, from_channel_list, proxy, amount=1000
-    # discord.get_message_from_channel(data[0][0]['discord_token'], from_channel_list, data[0][0]['proxy'], 200)
-    # exit()
-
-
-    # 发送消息
-    for d in data:
-        print(d)
-        # try:
-        print('第',d['discord_id'],'个账户')
-        discord = DiscordUtil()
-        # token, proxy, message, to_channel, guild_id='', reply_message_id='', reply_account_id='', reply_rate=0.4
-        discord.send_message(d['discord_token'], d['proxy'],'ExpeditionLiveInOneDay', '1082506347574206494')
-        # except:
-        #     pass
-    exit()
 
 
 
@@ -262,13 +241,23 @@ if __name__ == '__main__':
     # # # 将数据2个一组分成若干组
     # data = my_format_data(start_num=1, end_num=4)
     # step = 2
-    # data = [data[i:i+step] for i in range(0,len(data),step)]
+    # group_data = [data[i:i+step] for i in range(0,len(data),step)]
+    
     # guild_id, from_channel_list, to_channel, mods, keywords = project_info('project1')
+
+    # # 用来获取频道历史消息
+    # discord = DiscordUtil()
+    # # token, from_channel_list, proxy, amount=1000
+    # discord.get_message_from_channel(data[0]['discord_token'], from_channel_list, data[0]['proxy'], 300)
+    # exit()
+    
+
+    # 双号互聊
     # threads = []
-    # for d in data:
+    # for d in group_data:
     #     # print(d)
     #     discord = DiscordUtil()
-    #     # account_info, from_channel_list, to_channel, from_email, to_email, guild_id='', reply_rate=0.4（回复消息概率）, interval_time=60（两个消息发送间隔）, auto=True（控制消息来源，True为频道历史消息，False为自备消息）mods=[], keywords=[]
+    #     # account_info, from_channel_list, to_channel, from_email, to_email, guild_id='', reply_rate=0.4（回复消息概率）, interval_time=60（两个消息发送间隔）, is_channel_message=True（控制消息来源，True为频道历史消息，False为自备消息）mods=[], keywords=[]
     #     th = threading.Thread(target=discord.chat,args=(d, from_channel_list, to_channel, from_email, to_email, guild_id, 0.4, 1, True, mods, keywords))
     #     threads.append(th)
     # for th in threads:
